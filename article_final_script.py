@@ -58,15 +58,13 @@ duree_suivi
 duree_suivi.describe()
 
 #get the longitudinal dataset for leaspy
-corriger = suivi_[['ID','TIME','visite','indexscbarthel','indexscrankin','indexnihss','initiation','scoretot','tmtat','tmtbt',
-                            'tmtbe','echelv_cor','gblibre_total','ind_react','rdtotal','empan_bis','barragecor_bis','coderep_bis',
-                            'vadas_cog']]
+corriger = suivi_[['ID','TIME','visite','indexscbarthel','indexscrankin','indexnihss','initiation','tmtat','tmtbt',
+                            'tmtbe','echelv_cor','gblibre_total','ind_react','rdtotal','empan_bis','barragecor_bis','coderep_bis']]
 corriger.describe()
 
 #transformation
 corriger[['indexscbarthel_t']] = 100 - corriger[['indexscbarthel']]
 corriger[['initiation_t']] = 37 - corriger[['initiation']]
-corriger[['scoretot_t']] = 144 - corriger[['scoretot']]
 corriger[['echelv_cor_t']] = 100 - corriger[['echelv_cor']]
 corriger[['gblibre_total_t']] = 48 - corriger[['gblibre_total']]
 corriger[['ind_react_t']] = 100 - corriger[['ind_react']]
@@ -88,7 +86,6 @@ corriger[['rdtotal_st']] = corriger[['rdtotal_t']]/16
 corriger[['empan_bis_st']] = (corriger[['empan_bis']]-1)/(5-1)
 corriger[['barragecor_bis_st']] = (corriger[['barragecor_bis']]-1)/(10-1)
 corriger[['coderep_bis_st']] = (corriger[['coderep_bis']]-1)/(10-1)
-corriger[['vadas_cog_st']] = corriger[['vadas_cog']]/125
 
 #leaspy 
 leaspy_clinical = corriger[['ID','TIME','indexscbarthel_st','indexscrankin_st','indexnihss_st','initiation_st','tmtat_st','tmtbt_st',
