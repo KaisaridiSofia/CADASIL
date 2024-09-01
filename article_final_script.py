@@ -350,9 +350,6 @@ print(cov_params[['calcool_t']].value_counts(normalize=True).round(2))
 print(cov_params[['Domaine']].value_counts())
 print(cov_params[['Domaine']].value_counts(normalize=True).round(2))
 
-print(cov_params[['hta']].value_counts())
-print(cov_params[['hta']].value_counts(normalize=True).round(2))
-
 print(cov_params[['hcholes']].value_counts())
 print(cov_params[['hcholes']].value_counts(normalize=True).round(2))
 
