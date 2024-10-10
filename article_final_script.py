@@ -315,6 +315,271 @@ def append_spaceshifts_to_individual_parameters_dataframe(df_individual_paramete
 params_all = append_spaceshifts_to_individual_parameters_dataframe(ind_param, leaspy, time_homogeneous=False)
 params_all
 
+#compute reconstruction error
+for i in leaspy_clinical['ID'].unique():
+    subject_id =str(i)
+    observations = leaspy_clinical.loc[leaspy_clinical['ID']== i].reset_index()
+    observations = observations.rename(columns={'indexscbarthel_st' : 'indexscbarthel',
+                                            'indexscrankin_st' : 'indexscrankin',
+                                            'indexnihss_st' : 'indexnihss',
+                                            'initiation_st' : 'initiation',
+                                            'tmtat_st' : 'tmtat',
+                                            'tmtbt_st' : 'tmtbt',
+                                            'tmtbe_st' : 'tmtbe',
+                                            'echelv_cor_st' : 'echelv',
+                                            'gblibre_total_st' : 'gblibre_total',
+                                            'ind_react_st' : 'ind_react',
+                                            'rdtotal_st' : 'rdtotal',
+                                            'empan_bis_st' : 'empan',
+                                            'barragecor_bis_st' : 'barragecor',
+                                            'coderep_bis_st' : 'coderep'})
+    timepoints = observations['TIME']
+    reconstruction = leaspy.estimate({subject_id: timepoints.values}, ip)
+    leaspy_values = pd.DataFrame(reconstruction[subject_id])
+    leaspy_values = leaspy_values.rename(columns={0 : 'indexscbarthel_est', 1 : 'indexscrankin_est', 2 : 'indexnihss_est', 3 : 'initiation_est', 4 : 'tmtat_est', 
+                                              5 : 'tmtbt_est', 6 : 'tmtbe_est', 7 : 'echelv_est', 8 : 'gblibre_total_est', 9 : 'ind_react_est', 10 : 'rdtotal_est', 
+                                              11 : 'empan_est', 12 : 'barragecor_est', 13 : 'coderep_est'})
+    
+    R2_id = observations.join(leaspy_values)
+    
+    if i==1001 :
+        R2 = R2_id
+    else :
+        R2 = pd.concat([R2, R2_id])
+
+x = R2.loc[R2['indexscbarthel'].notna(), ['indexscbarthel']]
+y = R2.loc[R2['indexscbarthel'].notna(), ['indexscbarthel_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'indexscbarthel','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'indexscbarthel','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'indexscbarthel','coef'] = reg.coef_
+
+x = R2.loc[R2['indexscrankin'].notna(), ['indexscrankin']]
+y = R2.loc[R2['indexscrankin'].notna(), ['indexscrankin_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'indexscrankin','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'indexscrankin','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'indexscrankin','coef'] = reg.coef_
+
+x = R2.loc[R2['indexnihss'].notna(), ['indexnihss']]
+y = R2.loc[R2['indexnihss'].notna(), ['indexnihss_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'indexnihss','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'indexnihss','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'indexnihss','coef'] = reg.coef_
+
+x = R2.loc[R2['initiation'].notna(), ['initiation']]
+y = R2.loc[R2['initiation'].notna(), ['initiation_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'initiation','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'initiation','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'initiation','coef'] = reg.coef_
+
+x = R2.loc[R2['tmtat'].notna(), ['tmtat']]
+y = R2.loc[R2['tmtat'].notna(), ['tmtat_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtat','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtat','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'tmtat','coef'] = reg.coef_
+
+x = R2.loc[R2['tmtbt'].notna(), ['tmtbt']]
+y = R2.loc[R2['tmtbt'].notna(), ['tmtbt_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtbt','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtbt','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'tmtbt','coef'] = reg.coef_
+
+x = R2.loc[R2['tmtbe'].notna(), ['tmtbe']]
+y = R2.loc[R2['tmtbe'].notna(), ['tmtbe_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtbe','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'tmtbe','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'tmtbe','coef'] = reg.coef_
+
+x = R2.loc[R2['echelv'].notna(), ['echelv']]
+y = R2.loc[R2['echelv'].notna(), ['echelv_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'echelv','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'echelv','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'echelv','coef'] = reg.coef_
+
+x = R2.loc[R2['gblibre_total'].notna(), ['gblibre_total']]
+y = R2.loc[R2['gblibre_total'].notna(), ['gblibre_total_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'gblibre_total','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'gblibre_total','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'gblibre_total','coef'] = reg.coef_
+
+x = R2.loc[R2['ind_react'].notna(), ['ind_react']]
+y = R2.loc[R2['ind_react'].notna(), ['ind_react_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'ind_react','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'ind_react','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'ind_react','coef'] = reg.coef_
+
+x = R2.loc[R2['rdtotal'].notna(), ['rdtotal']]
+y = R2.loc[R2['rdtotal'].notna(), ['rdtotal_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'rdtotal','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'rdtotal','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'rdtotal','coef'] = reg.coef_
+
+x = R2.loc[R2['empan'].notna(), ['empan']]
+y = R2.loc[R2['empan'].notna(), ['empan_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'empan','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'empan','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'empan','coef'] = reg.coef_
+
+x = R2.loc[R2['barragecor'].notna(), ['barragecor']]
+y = R2.loc[R2['barragecor'].notna(), ['barragecor_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'barragecor','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'barragecor','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'barragecor','coef'] = reg.coef_
+
+x = R2.loc[R2['coderep'].notna(), ['coderep']]
+y = R2.loc[R2['coderep'].notna(), ['coderep_est']]
+reg = LinearRegression().fit(x,y)
+R2_final.loc[R2_final['feature'] == 'coderep','R2_sklearn'] = reg.score(x,y)
+R2_final.loc[R2_final['feature'] == 'coderep','intercept'] = reg.intercept_
+R2_final.loc[R2_final['feature'] == 'coderep','coef'] = reg.coef_
+
+R2_final
+
+#plot
+sns.set_style('white')
+
+fig, ((ax1, ax2, ax3), (ax4 ,ax5, ax6), (ax7, ax8, ax9), (ax10, ax11, ax12), (ax13, ax14, ax15)) = plt.subplots(5, 3, figsize=(16, 28))
+
+ax1.scatter(x=R2['indexscbarthel'], y=R2['indexscbarthel_est'], color='red')
+ax1.axline((0,R2_final.iloc[0]['intercept']),(1,R2_final.iloc[0]['coef']+R2_final.iloc[0]['intercept']), linestyle='dotted', color='black')
+ax1.set_xlabel('real observation')
+ax1.set_ylabel('leaspy estimation')
+ax1.set_title('Barthel index')
+ax1.text(0.8, 0.05, r'$R^2 = 0.95$')
+ax1.set_xlim(-0.05,1.05)
+ax1.set_ylim(-0.05,1.05)
+
+ax2.scatter(x=R2['indexscrankin'], y=R2['indexscrankin_est'], color='lime')
+ax2.axline((0,R2_final.iloc[1]['intercept']),(1,R2_final.iloc[1]['coef']+R2_final.iloc[1]['intercept']), linestyle='dotted', color='black')
+ax2.set_xlabel('real observation')
+ax2.set_ylabel('leaspy estimation')
+ax2.set_title('Modified Rankin Scale')
+ax2.text(0.8, 0.05, r'$R^2 = 0.84$')
+ax2.set_xlim(-0.05,1.05)
+ax2.set_ylim(-0.05,1.05)
+
+ax3.scatter(x=R2['indexnihss'], y=R2['indexnihss_est'], color='blue')
+ax3.axline((0,R2_final.iloc[2]['intercept']),(1,R2_final.iloc[2]['coef']+R2_final.iloc[2]['intercept']), linestyle='dotted', color='black')
+ax3.set_xlabel('real observation')
+ax3.set_ylabel('leaspy estimation')
+ax3.set_title('NIHSS index')
+ax3.text(0.8, 0.05, r'$R^2 = 080$')
+ax3.set_xlim(-0.05,1.05)
+ax3.set_ylim(-0.05,1.05)
+
+ax4.scatter(x=R2['initiation'], y=R2['initiation_est'], color='black')
+ax4.axline((0,R2_final.iloc[3]['intercept']),(1,R2_final.iloc[3]['coef']+R2_final.iloc[3]['intercept']), linestyle='dotted', color='red')
+ax4.set_xlabel('real observation')
+ax4.set_ylabel('leaspy estimation')
+ax4.set_title('MDRS initiation')
+ax4.text(0.8, 0.05, r'$R^2 = 0.85$')
+ax4.set_xlim(-0.05,1.05)
+ax4.set_ylim(-0.05,1.05)
+
+ax5.scatter(x=R2['tmtat'], y=R2['tmtat_est'], color='fuchsia')
+ax5.axline((0,R2_final.iloc[4]['intercept']),(1,R2_final.iloc[4]['coef']+R2_final.iloc[4]['intercept']), linestyle='dotted',color='black')
+ax5.set_xlabel('real observation')
+ax5.set_ylabel('leaspy estimation')
+ax5.set_title('TMTAT')
+ax5.text(0.8, 0.05, r'$R^2 = 0.79$')
+ax5.set_xlim(-0.05,1.05)
+ax5.set_ylim(-0.05,1.05)
+
+ax6.scatter(x=R2['tmtbt'], y=R2['tmtbt_est'], color='yellow')
+ax6.axline((0,R2_final.iloc[5]['intercept']),(1,R2_final.iloc[5]['coef']+R2_final.iloc[5]['intercept']), linestyle='dotted', color='black')
+ax6.set_xlabel('real observation')
+ax6.set_ylabel('leaspy estimation')
+ax6.set_title('TMTBT')
+ax6.text(0.8, 0.05, r'$R^2 = 0.76$')
+ax6.set_xlim(-0.05,1.05)
+ax6.set_ylim(-0.05,1.05)
+
+ax7.scatter(x=R2['tmtbe'], y=R2['tmtbe_est'], color='aqua')
+ax7.axline((0,R2_final.iloc[6]['intercept']),(1,R2_final.iloc[6]['coef']+R2_final.iloc[6]['intercept']), linestyle='dotted', color='black')
+ax7.set_xlabel('real observation')
+ax7.set_ylabel('leaspy estimation')
+ax7.set_title('TMTBE')
+ax7.text(0.8, 0.05, r'$R^2 = 0.40$')
+ax7.set_xlim(-0.05,0.58)
+ax7.set_ylim(-0.05,0.38)
+
+ax8.scatter(x=R2['echelv'], y=R2['echelv_est'], color='silver')
+ax8.axline((0,R2_final.iloc[7]['intercept']),(1,R2_final.iloc[7]['coef']+R2_final.iloc[7]['intercept']), linestyle='dotted', color='black')
+ax8.set_xlabel('real observation')
+ax8.set_ylabel('leaspy estimation')
+ax8.set_title('EQVAS Quality of life')
+ax8.text(0.8, 0.1, r'$R^2 = 0.26$')
+ax8.set_xlim(-0.05,1.05)
+ax8.set_ylim(0.05,0.6)
+
+ax9.scatter(x=R2['gblibre_total'], y=R2['gblibre_total_est'], color='maroon')
+ax9.axline((0,R2_final.iloc[8]['intercept']),(1,R2_final.iloc[8]['coef']+R2_final.iloc[8]['intercept']), linestyle='dotted', color='black')
+ax9.set_xlabel('real observation')
+ax9.set_ylabel('leaspy estimation')
+ax9.set_title('GB Total Free Recall')
+ax9.text(0.8, 0.05, r'$R^2 = 0.79$')
+ax9.set_xlim(-0.05,1.05)
+ax9.set_ylim(-0.05,1.05)
+
+ax10.scatter(x=R2['ind_react'], y=R2['ind_react_est'], color='olive')
+ax10.axline((0,R2_final.iloc[9]['intercept']),(1,R2_final.iloc[9]['coef']+R2_final.iloc[9]['intercept']), linestyle='dotted', color='black')
+ax10.set_xlabel('real observation')
+ax10.set_ylabel('leaspy estimation')
+ax10.set_title('GB Index of Sensitivity to Cueing')
+ax10.text(0.8, 0.05, r'$R^2 = 0.68$')
+ax10.set_xlim(-0.05,1.05)
+ax10.set_ylim(-0.05,1.05)
+
+ax11.scatter(x=R2['rdtotal'], y=R2['rdtotal_est'], color='green')
+ax11.axline((0,R2_final.iloc[10]['intercept']),(1,R2_final.iloc[10]['coef']+R2_final.iloc[10]['intercept']), linestyle='dotted', color='black')
+ax11.set_xlabel('real observation')
+ax11.set_ylabel('leaspy estimation')
+ax11.set_title('GB Delayed Total Recall')
+ax11.text(0.8, 0.05, r'$R^2 = 0.82$')
+ax11.set_xlim(-0.05,1.05)
+ax11.set_ylim(-0.05,1.05)
+
+ax12.scatter(x=R2['empan'], y=R2['empan_est'], color='teal')
+ax12.axline((0,R2_final.iloc[11]['intercept']),(1,R2_final.iloc[11]['coef']+R2_final.iloc[11]['intercept']), linestyle='dotted', color='black')
+ax12.set_xlabel('real observation')
+ax12.set_ylabel('leaspy estimation')
+ax12.set_title('VADAS-Cog Backward Digit Span')
+ax12.text(0.8, 0.05, r'$R^2 = 0.47$')
+ax12.set_xlim(-0.05,1.05)
+ax12.set_ylim(-0.05,1.05)
+
+ax13.scatter(x=R2['barragecor'], y=R2['barragecor_est'], color='navy')
+ax13.axline((0,R2_final.iloc[12]['intercept']),(1,R2_final.iloc[12]['coef']+R2_final.iloc[12]['intercept']), linestyle='dotted', color='black')
+ax13.set_xlabel('real observation')
+ax13.set_ylabel('leaspy estimation')
+ax13.set_title('VADAS-Cog Digit Canccellation Task')
+ax13.text(0.8, 0.05, r'$R^2 = 0.79$')
+ax13.set_xlim(-0.05,1.05)
+ax13.set_ylim(-0.05,1.05)
+
+ax14.scatter(x=R2['coderep'], y=R2['coderep_est'], color='purple')
+ax14.axline((0,R2_final.iloc[13]['intercept']),(1,R2_final.iloc[13]['coef']+R2_final.iloc[13]['intercept']), linestyle='dotted', color='black')
+ax14.set_xlabel('real observation')
+ax14.set_ylabel('leaspy estimation')
+ax14.set_title('VADAS-Cog Symbol Digit Test')
+ax14.text(0.8, 0.05, r'$R^2 = 0.86$')
+ax14.set_xlim(-0.05,1.05)
+ax14.set_ylim(-0.05,1.05)
+
+plt.show()
+
 #load the covariables but lose the previously calculated xi and tau
 cov = pd.read_excel('/Users/sofia.kaisaridi/Desktop/Résultats/covariables_par_patient.xlsx')
 cov = cov.drop(['tau','xi'], axis=1)
@@ -1015,6 +1280,114 @@ print(frame.groupby(['labels'])['w_10','w_11','w_12','w_13'].agg(['mean', 'count
 print(frame.groupby(['labels'])['w_0','w_1','w_2','w_3','w_4'].agg(['mean']))
 print(frame.groupby(['labels'])['w_5','w_6','w_7','w_8','w_9'].agg(['mean']))
 print(frame.groupby(['labels'])['w_10','w_11','w_12','w_13'].agg(['mean']))
+
+#RMSE par group
+frame[['ID']] = pd.DataFrame(R2['ID'].unique())
+R2 = pd.merge(R2, frame[['ID','labels']], on='ID')
+
+RMSE = R2.drop('index', axis=1)
+RMSE['RMSE_indexscbarthel'] = ((R2['indexscbarthel'] - R2['indexscbarthel_est'])**2)**(1/2)
+RMSE['RMSE_indexscrankin'] = ((R2['indexscrankin'] - R2['indexscrankin_est'])**2)**(1/2)
+RMSE['RMSE_indexnihss'] = ((R2['indexnihss'] - R2['indexnihss_est'])**2)**(1/2)
+RMSE['RMSE_initiation'] = ((R2['initiation'] - R2['initiation_est'])**2)**(1/2)
+RMSE['RMSE_tmtat'] = ((R2['tmtat'] - R2['tmtat_est'])**2)**(1/2)
+RMSE['RMSE_tmtbt'] = ((R2['tmtbt'] - R2['tmtbt_est'])**2)**(1/2)
+RMSE['RMSE_tmtbe'] = ((R2['tmtbe'] - R2['tmtbe_est'])**2)**(1/2)
+RMSE['RMSE_echelv'] = ((R2['echelv'] - R2['echelv_est'])**2)**(1/2)
+RMSE['RMSE_gblibre_total'] = ((R2['gblibre_total'] - R2['gblibre_total_est'])**2)**(1/2)
+RMSE['RMSE_ind_react'] = ((R2['ind_react'] - R2['ind_react_est'])**2)**(1/2)
+RMSE['RMSE_rdtotal'] = ((R2['rdtotal'] - R2['rdtotal_est'])**2)**(1/2)
+RMSE['RMSE_empan'] = ((R2['empan'] - R2['empan_est'])**2)**(1/2)
+RMSE['RMSE_barragecor'] = ((R2['barragecor'] - R2['barragecor_est'])**2)**(1/2)
+RMSE['RMSE_coderep'] = ((R2['coderep'] - R2['coderep_est'])**2)**(1/2)
+RMSE
+
+#put them in a suitable dataframe for the plot
+RMSE_boxplot_1 = pd.DataFrame(RMSE.loc[RMSE['RMSE_indexscbarthel'].notnull(),['RMSE_indexscbarthel','labels']])
+RMSE_boxplot_1 = RMSE_boxplot_1.rename(columns={'RMSE_indexscbarthel' : 'value'})
+RMSE_boxplot_1['feature'] = 'Barthel Index'
+
+RMSE_boxplot_2 = pd.DataFrame(RMSE.loc[RMSE['RMSE_indexscrankin'].notnull(),['RMSE_indexscrankin','labels']])
+RMSE_boxplot_2 = RMSE_boxplot_2.rename(columns={'RMSE_indexscrankin' : 'value'})
+RMSE_boxplot_2['feature'] = 'Modified Rankin Scale'
+
+RMSE_boxplot_3 = pd.DataFrame(RMSE.loc[RMSE['RMSE_indexnihss'].notnull(),['RMSE_indexnihss','labels']])
+RMSE_boxplot_3 = RMSE_boxplot_3.rename(columns={'RMSE_indexnihss' : 'value'})
+RMSE_boxplot_3['feature'] = 'NIHSS Index'
+
+RMSE_boxplot_4 = pd.DataFrame(RMSE.loc[RMSE['RMSE_initiation'].notnull(),['RMSE_initiation','labels']])
+RMSE_boxplot_4 = RMSE_boxplot_4.rename(columns={'RMSE_initiation' : 'value'})
+RMSE_boxplot_4['feature'] = 'MDRS Initiation'
+
+RMSE_boxplot_5 = pd.DataFrame(RMSE.loc[RMSE['RMSE_tmtat'].notnull(),['RMSE_tmtat','labels']])
+RMSE_boxplot_5 = RMSE_boxplot_5.rename(columns={'RMSE_tmtat' : 'value'})
+RMSE_boxplot_5['feature'] = 'TMTA Time'
+
+RMSE_boxplot_6 = pd.DataFrame(RMSE.loc[RMSE['RMSE_tmtbt'].notnull(),['RMSE_tmtbt','labels']])
+RMSE_boxplot_6 = RMSE_boxplot_6.rename(columns={'RMSE_tmtbt' : 'value'})
+RMSE_boxplot_6['feature'] = 'TMTB Time'
+
+RMSE_boxplot_7 = pd.DataFrame(RMSE.loc[RMSE['RMSE_tmtbe'].notnull(),['RMSE_tmtbe','labels']])
+RMSE_boxplot_7 = RMSE_boxplot_7.rename(columns={'RMSE_tmtbe' : 'value'})
+RMSE_boxplot_7['feature'] = 'TMTB Errors'
+
+RMSE_boxplot_8 = pd.DataFrame(RMSE.loc[RMSE['RMSE_echelv'].notnull(),['RMSE_echelv','labels']])
+RMSE_boxplot_8 = RMSE_boxplot_8.rename(columns={'RMSE_echelv' : 'value'})
+RMSE_boxplot_8['feature'] = 'EQVAS Quality of life'
+
+RMSE_boxplot_9 = pd.DataFrame(RMSE.loc[RMSE['RMSE_gblibre_total'].notnull(),['RMSE_gblibre_total','labels']])
+RMSE_boxplot_9 = RMSE_boxplot_9.rename(columns={'RMSE_gblibre_total' : 'value'})
+RMSE_boxplot_9['feature'] = 'GB Total Free Recall'
+
+RMSE_boxplot_10 = pd.DataFrame(RMSE.loc[RMSE['RMSE_ind_react'].notnull(),['RMSE_ind_react','labels']])
+RMSE_boxplot_10 = RMSE_boxplot_10.rename(columns={'RMSE_ind_react' : 'value'})
+RMSE_boxplot_10['feature'] = 'GB Index of Sensitivity to Cueing'
+
+RMSE_boxplot_11 = pd.DataFrame(RMSE.loc[RMSE['RMSE_rdtotal'].notnull(),['RMSE_rdtotal','labels']])
+RMSE_boxplot_11 = RMSE_boxplot_11.rename(columns={'RMSE_rdtotal' : 'value'})
+RMSE_boxplot_11['feature'] = 'GB Delayed Total Recall'
+
+RMSE_boxplot_12 = pd.DataFrame(RMSE.loc[RMSE['RMSE_empan'].notnull(),['RMSE_empan','labels']])
+RMSE_boxplot_12 = RMSE_boxplot_12.rename(columns={'RMSE_empan' : 'value'})
+RMSE_boxplot_12['feature'] = 'VADAS-Cog Backward Digit Span'
+
+RMSE_boxplot_13 = pd.DataFrame(RMSE.loc[RMSE['RMSE_barragecor'].notnull(),['RMSE_barragecor','labels']])
+RMSE_boxplot_13 = RMSE_boxplot_13.rename(columns={'RMSE_barragecor' : 'value'})
+RMSE_boxplot_13['feature'] = 'VADAS-Cog Digit Canccellation Task'
+
+RMSE_boxplot_14 = pd.DataFrame(RMSE.loc[RMSE['RMSE_coderep'].notnull(),['RMSE_coderep','labels']])
+RMSE_boxplot_14 = RMSE_boxplot_14.rename(columns={'RMSE_coderep' : 'value'})
+RMSE_boxplot_14['feature'] = 'VADAS-Cog Symbol Digit Test'
+
+RMSE_boxplot_A = pd.concat([RMSE_boxplot_1, RMSE_boxplot_2, RMSE_boxplot_3, RMSE_boxplot_4, RMSE_boxplot_5, RMSE_boxplot_6, RMSE_boxplot_7], axis=0)
+RMSE_boxplot = pd.concat([RMSE_boxplot_A, RMSE_boxplot_8, RMSE_boxplot_9, RMSE_boxplot_10,
+                         RMSE_boxplot_11, RMSE_boxplot_12, RMSE_boxplot_13, RMSE_boxplot_14], axis=0)
+
+#plot
+sns.set_style('whitegrid')
+fig, [ax1, ax2] = plt.subplots(nrows=1, ncols=2 ,figsize=(12, 6))
+plt.subplots_adjust(wspace=0.5)
+
+colors = ['red', 'lime', 'blue', 'black', 'fuchsia', 'yellow', 'aqua',
+              'silver', 'maroon', 'olive', 'green', 'teal', 'navy', 'purple']
+
+ax1 = plt.subplot(1,2,1) 
+ax1 = sns.boxplot(x='value', y='feature', data=RMSE_boxplot.loc[RMSE['labels']=='tardif'], palette=colors, showfliers=False, saturation=1)
+ax1.set_ylabel('')
+ax1.set_xlabel('RMSE value')
+ax1.set_xlim(-0.01, 0.58)
+ax1.tick_params(labelsize=8, rotation=30)
+ax1.set_title('late subgroup')
+
+ax2 = plt.subplot(1,2,2)
+ax2 = sns.boxplot(x='value', y='feature', data=RMSE_boxplot.loc[RMSE['labels']=='precoce'], palette=colors, showfliers=False, saturation=1)
+ax2.set_ylabel('')
+ax2.set_xlabel('RMSE value')
+ax2.set_xlim(-0.01, 0.58)
+ax2.tick_params(labelsize=8, rotation=30)
+ax2.set_title('early subgroup')
+
+plt.show()
 
 import seaborn as sns
 #distribution plots
